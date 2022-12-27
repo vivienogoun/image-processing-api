@@ -2,7 +2,7 @@ import express from 'express';
 const routes = express.Router();
 
 routes.get('/', (req, res) => {
-    res.send('it is working');
+    res.send('Image Processing API');
 });
 
 export default routes;
