@@ -8,7 +8,7 @@ describe('Endpoint Testing', () => {
             const response = await request.get(
                 '/api/images?filename=palmtunnel&width=200&height=200'
             );
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(301);
         } catch (error) {
             console.log(error);
         }

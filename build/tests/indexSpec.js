@@ -52,7 +52,7 @@ describe('Endpoint Testing', function () {
                     return [4 /*yield*/, request.get('/api/images?filename=palmtunnel&width=200&height=200')];
                 case 1:
                     response = _a.sent();
-                    expect(response.status).toBe(200);
+                    expect(response.status).toBe(301);
                     return [3 /*break*/, 3];
                 case 2:
                     error_1 = _a.sent();

@@ -40,44 +40,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var fs_1 = require("fs");
 var path_1 = __importDefault(require("path"));
 var process_1 = __importDefault(require("../utilities/process"));
 var routes = express_1.default.Router();
 routes.get('/images', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var filename, filename_full, inputFile, width, height, filename_thumb, error_1, outputFile, error_2;
+    var filename, filename_full, inputFile, width, height, filename_thumb, outputFile, imagePath;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 5, , 6]);
-                filename = req.query.filename;
-                filename_full = '/' + filename + '.jpg';
-                inputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/full', filename_full);
-                width = parseInt(req.query.width);
-                height = parseInt(req.query.height);
-                filename_thumb = '/' + filename + '_thumb.jpg';
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, fs_1.promises.mkdir(path_1.default.join(__dirname, '..', '..', '/assets', '/thumb'))];
-            case 2:
-                _a.sent();
-                return [3 /*break*/, 4];
-            case 3:
-                error_1 = _a.sent();
-                console.log(error_1);
-                return [3 /*break*/, 4];
-            case 4:
-                outputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/thumb', filename_thumb);
-                (0, process_1.default)(inputFile, width, height, outputFile);
-                res.sendFile(path_1.default.resolve(outputFile));
-                return [3 /*break*/, 6];
-            case 5:
-                error_2 = _a.sent();
-                console.log(error_2);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+        try {
+            filename = req.query.filename;
+            filename_full = '/' + filename + '.jpg';
+            inputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/full', filename_full);
+            width = parseInt(req.query.width);
+            height = parseInt(req.query.height);
+            filename_thumb = '/' + filename + '_thumb.jpg';
+            outputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/thumb', filename_thumb);
+            (0, process_1.default)(inputFile, width, height, outputFile);
+            imagePath = filename + '_thumb.jpg';
+            res.redirect("/api/images/".concat(imagePath));
         }
+        catch (error) {
+            console.log(error);
+        }
+        return [2 /*return*/];
     });
 }); });
 exports.default = routes;
