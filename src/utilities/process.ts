@@ -1,13 +1,17 @@
 import sharp from 'sharp';
 
-const resizer = (
-    inputFile: string,
+async function resizer(
+    input: string,
     width: number,
     height: number,
-    outputFile: string
-): boolean => {
-    sharp(inputFile).resize(width, height).toFile(outputFile);
-    return true;
-};
+    output: string
+): Promise<void> {
+    try {
+        await sharp(input).resize(width, height).toFile(output);
+        console.log(`Resized image saved to ${output}`);
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 export default resizer;

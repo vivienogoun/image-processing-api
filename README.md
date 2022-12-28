@@ -8,5 +8,5 @@ Scripts used:
 
 The endpoint that should be accessed is: http://localhost:3000/api/images?filename={image_path}&width={width_to_resize}&height={height_to_resize}
 
-After enter the endpoint, the image is process in the back-end and the server redirect to a page to see the resized image.
+After enter the endpoint, the image is process in the back-end.
 But it is necessary to refresh the page to see the resized image.
