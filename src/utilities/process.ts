@@ -5,8 +5,9 @@ const resizer = (
     width: number,
     height: number,
     outputFile: string
-): void => {
+): boolean => {
     sharp(inputFile).resize(width, height).toFile(outputFile);
+    return true;
 };
 
 export default resizer;

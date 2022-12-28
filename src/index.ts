@@ -5,7 +5,10 @@ import path from 'path';
 const app = express();
 const port = 3000;
 
-app.use('/api/images', express.static(path.join(__dirname, '..', 'assets', 'thumb')));
+app.use(
+    '/api/images',
+    express.static(path.join(__dirname, '..', 'assets', 'thumb'))
+);
 app.use('/api', routes);
 
 app.listen(port, () => {

@@ -1,7 +1,9 @@
 import supertest from 'supertest';
 import app from '../index';
+import resizer from '../utilities/process';
 
 const request = supertest(app);
+
 describe('Endpoint Testing', () => {
     it('gets the test endpoint', async () => {
         try {
