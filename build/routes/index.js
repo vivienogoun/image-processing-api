@@ -7,7 +7,7 @@ var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
 var process_1 = __importDefault(require("../utilities/process"));
 var routes = express_1.default.Router();
-routes.get('/images', function (req, res, next) {
+routes.use('/images', function (req, res, next) {
     try {
         var filename = req.query.filename;
         var filename_full = '/' + filename + '.jpg';
@@ -17,14 +17,22 @@ routes.get('/images', function (req, res, next) {
         var filename_thumb = '/' + filename + '_thumb.jpg';
         var outputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/thumb', filename_thumb);
         (0, process_1.default)(inputFile, width, height, outputFile);
-        next();
+        res.sendFile(outputFile, function (err) {
+            if (err) {
+                next(err);
+            }
+            else {
+                console.log('Sent');
+                next();
+            }
+        });
     }
     catch (error) {
         console.log(error);
     }
-}, function (req, res) {
-    var filename = req.query.filename;
-    var imagePath = filename + '_thumb.jpg';
-    res.redirect("/api/images/".concat(imagePath));
+});
+routes.get('/images', function (req, res) {
+    console.log('sent');
+    res.send();
 });
 exports.default = routes;

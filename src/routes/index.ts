@@ -3,7 +3,7 @@ import path from 'path';
 import resizer from '../utilities/process';
 const routes = express.Router();
 
-routes.get('/images', (req, res, next) => {
+routes.use('/images', (req, res, next) => {
     try {
         const filename: string = req.query.filename as unknown as string;
         const filename_full: string = '/' + filename + '.jpg';
@@ -27,14 +27,20 @@ routes.get('/images', (req, res, next) => {
             filename_thumb
         );
         resizer(inputFile, width, height, outputFile);
-        next();
+        res.sendFile(outputFile, function (err) {
+            if (err) {
+                next(err);
+            } else {
+                next();
+            }
+        });
     } catch (error) {
         console.log(error);
     }
-}, (req, res) => {
-        const filename: string = req.query.filename as unknown as string;
-        const imagePath: string = filename + '_thumb.jpg';
-        res.redirect(`/api/images/${imagePath}`);
+});
+
+routes.get('/images', (req, res) => {
+    res.send();
 });
 
 export default routes;
