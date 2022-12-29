@@ -20,15 +20,9 @@ describe('Image resizer testing', () => {
             '..',
             '/assets',
             '/thumb',
-            'fjord_thumb.jpg'
-        );
-        await functions.resizer(input, width, height, output, path.join(
-            __dirname,
-            '..',
-            '..',
-            '/images',
             'fjord-200-200.jpg'
-        ));
+        );
+        await functions.resizer(input, width, height, output);
 
         const metadata = await sharp(output).metadata();
         expect(metadata.width).toEqual(width);

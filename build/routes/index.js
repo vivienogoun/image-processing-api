@@ -25,20 +25,30 @@ routes.get('/images', function (req, res) {
                 error: 'Width and height must be positive integers'
             });
         }
-        var filename_thumb = '/' + filename + '_thumb.jpg';
-        var outputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/thumb', filename_thumb);
-        var imagesFolder = path_1.default.join(__dirname, '..', '..', '/images'); // folder for storing cached images
+        /*const filename_thumb: string = '/' + filename + '_thumb.jpg';
+        const outputFile: string = path.join(
+            __dirname,
+            '..',
+            '..',
+            '/assets',
+            '/thumb',
+            filename_thumb
+        );*/
+        var imagesFolder = path_1.default.join(__dirname, '..', '..', '/assets', '/thumb'); // folder for storing cached images
         var imageName = "".concat(filename, "-").concat(width, "-").concat(height, ".jpg"); // name the cached image using the size dimensions
-        var imagePath = path_1.default.join(imagesFolder, imageName); //`${cacheFolder}/${filename}`;  path to the cached image file
+        var imagePath = path_1.default.join(imagesFolder, imageName); //  path to the cached image file
         if (process_1.default.fileExists(imagePath)) {
             // serve the cached image if it exists
-            res.sendFile(outputFile);
+            res.sendFile(imagePath);
         }
         else {
             // resize and cache the image if it doesn't exist
-            process_1.default.resizer(inputFile, width, height, outputFile, imagePath);
+            process_1.default.resizer(inputFile, width, height, imagePath);
             // serve the resized image
-            res.sendFile(outputFile);
+            res.sendFile(imagePath);
+            //res.redirect(req.originalUrl);
+            // Reload the page
+            res.send("\n                <html>\n                    <head>\n                    <script>\n                        window.location.reload();\n                    </script>\n                    </head>\n                    <body>\n                    Page is reloading...\n                    </body>\n                </html>\n                ");
         }
     }
     catch (error) {

@@ -36,39 +36,38 @@ routes.get(
                     error: 'Width and height must be positive integers'
                 });
             }
-            const filename_thumb: string = '/' + filename + '_thumb.jpg';
-            const outputFile: string = path.join(
-                __dirname,
-                '..',
-                '..',
-                '/assets',
-                '/thumb',
-                filename_thumb
-            );
 
             const imagesFolder: string = path.join(
                 __dirname,
                 '..',
                 '..',
-                '/images'
+                '/assets',
+                '/thumb'
             ); // folder for storing cached images
             const imageName: string = `${filename}-${width}-${height}.jpg`; // name the cached image using the size dimensions
             const imagePath = path.join(imagesFolder, imageName); //  path to the cached image file
 
             if (functions.fileExists(imagePath)) {
                 // serve the cached image if it exists
-                res.sendFile(outputFile);
+                res.sendFile(imagePath);
             } else {
                 // resize and cache the image if it doesn't exist
-                functions.resizer(
-                    inputFile,
-                    width,
-                    height,
-                    outputFile,
-                    imagePath
-                );
+                functions.resizer(inputFile, width, height, imagePath);
                 // serve the resized image
-                res.sendFile(outputFile);
+                res.sendFile(imagePath);
+                //res.redirect(req.originalUrl);
+                // Reload the page
+                res.send(`
+                <html>
+                    <head>
+                    <script>
+                        window.location.reload();
+                    </script>
+                    </head>
+                    <body>
+                    </body>
+                </html>
+                `);
             }
         } catch (error) {
             console.log(error);

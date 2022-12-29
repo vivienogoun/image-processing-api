@@ -14,19 +14,12 @@ async function resizer(
     input: string,
     width: number,
     height: number,
-    output: string,
-    cachePath: string
+    output: string
 ): Promise<void> {
     try {
         await sharp(input)
             .resize(width, height)
-            .toBuffer()
-            .then((data) => {
-                // save the resized image to the thumb folder
-                fs.writeFileSync(output, data);
-                // save the resized image to the cache
-                fs.writeFileSync(cachePath, data);
-            })
+            .toFile(output)
             .catch((err) => {
                 console.error(err);
             });
