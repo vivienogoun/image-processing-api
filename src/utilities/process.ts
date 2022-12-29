@@ -8,7 +8,6 @@ async function resizer(
 ): Promise<void> {
     try {
         await sharp(input).resize(width, height).toFile(output);
-        console.log(`Resized image saved to ${output}`);
     } catch (err) {
         console.error(err);
     }

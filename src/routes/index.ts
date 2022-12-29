@@ -1,10 +1,8 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import resizer from '../utilities/process';
 const routes = express.Router();
-
-
-var cache: string[] = [];
 
 routes.get(
     '/images',
@@ -35,11 +33,9 @@ routes.get(
                 Number(width) <= 0 ||
                 Number(height) <= 0
             ) {
-                return res
-                    .status(400)
-                    .send({
-                        error: 'Width and height must be positive integers'
-                    });
+                return res.status(400).send({
+                    error: 'Width and height must be positive integers'
+                });
             }
             const filename_thumb: string = '/' + filename + '_thumb.jpg';
             const outputFile: string = path.join(
@@ -51,20 +47,17 @@ routes.get(
                 filename_thumb
             );
 
-            // Create an unique key for the image
-            const key = `${filename}-${width}-${height}`;
-
-            // Check if the image is in the cache
-            if (key in cache) {
-                // If the image is in the cache, send it in the response
+            try {
+                fs.accessSync(outputFile, fs.constants.F_OK);
                 res.sendFile(outputFile);
-                return;
+            } catch (error) {
+                try {
+                    resizer(inputFile, width, height, outputFile);
+                } catch (error) {
+                    res.send('Please provide a valid filename');
+                }
+                res.sendFile(outputFile);
             }
-
-            // If the image is not in the cache, add it, resize the image and send it in the response
-            cache.push(key);
-            resizer(inputFile, width, height, outputFile);
-            res.sendFile(outputFile);
         } catch (error) {
             console.log(error);
             res.send('Something goes wrong. Please try again !');

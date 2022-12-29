@@ -5,14 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
-//import LRUCache from 'lru-cache';
+var fs_1 = __importDefault(require("fs"));
 var process_1 = __importDefault(require("../utilities/process"));
 var routes = express_1.default.Router();
-/*const cache = new LRUCache({
-    max: 100, // Set the maximum number of items in the cache
-    ttl: 1000 * 60 * 60 // Set the maximum age of an item in the cache (in milliseconds)
-});*/
-var cache = [];
 routes.get('/images', function (req, res) {
     try {
         var filename = req.query.filename;
@@ -27,26 +22,25 @@ routes.get('/images', function (req, res) {
             !Number.isInteger(Number(height)) ||
             Number(width) <= 0 ||
             Number(height) <= 0) {
-            return res
-                .status(400)
-                .send({
+            return res.status(400).send({
                 error: 'Width and height must be positive integers'
             });
         }
         var filename_thumb = '/' + filename + '_thumb.jpg';
         var outputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/thumb', filename_thumb);
-        // Generate a unique key for the image
-        //const key = `${filename}-${width}-${height}`;
-        // Check if the image is in the cache
-        //const imageData = cache.get(key);
-        if (filename in cache) {
-            // If the image is in the cache, send it in the response
-            res.sendFile(outputFile); //, { root: __dirname });
-            return;
+        try {
+            fs_1.default.accessSync(outputFile, fs_1.default.constants.F_OK);
+            res.sendFile(outputFile);
         }
-        cache.push(filename);
-        (0, process_1.default)(inputFile, width, height, outputFile);
-        res.sendFile(outputFile);
+        catch (error) {
+            try {
+                (0, process_1.default)(inputFile, width, height, outputFile);
+            }
+            catch (error) {
+                res.send('Please provide a valid filename');
+            }
+            res.sendFile(outputFile);
+        }
     }
     catch (error) {
         console.log(error);
