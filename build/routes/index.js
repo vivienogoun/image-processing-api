@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
-var fs_1 = __importDefault(require("fs"));
 var process_1 = __importDefault(require("../utilities/process"));
 var routes = express_1.default.Router();
 routes.get('/images', function (req, res) {
@@ -28,17 +27,17 @@ routes.get('/images', function (req, res) {
         }
         var filename_thumb = '/' + filename + '_thumb.jpg';
         var outputFile = path_1.default.join(__dirname, '..', '..', '/assets', '/thumb', filename_thumb);
-        try {
-            fs_1.default.accessSync(outputFile, fs_1.default.constants.F_OK);
+        var imagesFolder = path_1.default.join(__dirname, '..', '..', '/images'); // folder for storing cached images
+        var imageName = "".concat(filename, "-").concat(width, "-").concat(height, ".jpg"); // name the cached image using the size dimensions
+        var imagePath = path_1.default.join(imagesFolder, imageName); //`${cacheFolder}/${filename}`;  path to the cached image file
+        if (process_1.default.fileExists(imagePath)) {
+            // serve the cached image if it exists
             res.sendFile(outputFile);
         }
-        catch (error) {
-            try {
-                (0, process_1.default)(inputFile, width, height, outputFile);
-            }
-            catch (error) {
-                res.send('Please provide a valid filename');
-            }
+        else {
+            // resize and cache the image if it doesn't exist
+            process_1.default.resizer(inputFile, width, height, outputFile, imagePath);
+            // serve the resized image
             res.sendFile(outputFile);
         }
     }

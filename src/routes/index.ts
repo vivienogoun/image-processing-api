@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
-import resizer from '../utilities/process';
+import functions from '../utilities/process';
 const routes = express.Router();
 
 routes.get(
@@ -47,15 +46,28 @@ routes.get(
                 filename_thumb
             );
 
-            try {
-                fs.accessSync(outputFile, fs.constants.F_OK);
+            const imagesFolder: string = path.join(
+                __dirname,
+                '..',
+                '..',
+                '/images'
+            ); // folder for storing cached images
+            const imageName: string = `${filename}-${width}-${height}.jpg`; // name the cached image using the size dimensions
+            const imagePath = path.join(imagesFolder, imageName); //  path to the cached image file
+
+            if (functions.fileExists(imagePath)) {
+                // serve the cached image if it exists
                 res.sendFile(outputFile);
-            } catch (error) {
-                try {
-                    resizer(inputFile, width, height, outputFile);
-                } catch (error) {
-                    res.send('Please provide a valid filename');
-                }
+            } else {
+                // resize and cache the image if it doesn't exist
+                functions.resizer(
+                    inputFile,
+                    width,
+                    height,
+                    outputFile,
+                    imagePath
+                );
+                // serve the resized image
                 res.sendFile(outputFile);
             }
         } catch (error) {

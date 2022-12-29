@@ -1,4 +1,4 @@
-import resizer from '../utilities/process';
+import functions from '../utilities/process';
 import sharp from 'sharp';
 import path from 'path';
 
@@ -12,8 +12,8 @@ describe('Image resizer testing', () => {
             '/full',
             'fjord.jpg'
         );
-        const width: number = 100;
-        const height: number = 100;
+        const width: number = 200;
+        const height: number = 200;
         const output: string = path.join(
             __dirname,
             '..',
@@ -22,7 +22,13 @@ describe('Image resizer testing', () => {
             '/thumb',
             'fjord_thumb.jpg'
         );
-        await resizer(input, width, height, output);
+        await functions.resizer(input, width, height, output, path.join(
+            __dirname,
+            '..',
+            '..',
+            '/images',
+            'fjord-200-200.jpg'
+        ));
 
         const metadata = await sharp(output).metadata();
         expect(metadata.width).toEqual(width);
